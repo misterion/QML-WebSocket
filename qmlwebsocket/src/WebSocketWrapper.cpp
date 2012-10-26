@@ -32,11 +32,14 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 
-#include <QDebug>
+#include <QtCore/QDebug>
+
 #ifdef _DEBUG 
 #  define DEBUG_LOG qDebug() << __FILE__ << __LINE__ << __FUNCTION__
+#  define WARN_LOG qWarning() << __FILE__ << __LINE__ << __FUNCTION__
 #else
 #  define DEBUG_LOG / ## /
+#  define WARN_LOG / ## / 
 #endif
 
 using websocketpp::session_ptr;
@@ -78,9 +81,9 @@ public:
     this->_session = websocketpp::client_session_ptr();
   }
   
-  void on_message(session_ptr con,const std::string &msg)
+  void on_message(session_ptr con, const std::string &msg)
   {
-    const QString message = QString::fromStdString(msg);
+    const QString message = QString::fromUtf8(msg.c_str());
     DEBUG_LOG << "Got Message:" << message;
 
     this->_wrapper->message(message);
@@ -88,23 +91,25 @@ public:
 
   virtual void on_message(session_ptr session, const std::vector<unsigned char> &data) 
   {
+#ifdef _DEBUG 
     throw std::exception("The method or operation is not implemented.");
+#endif
   }
   
   void send(const QString& msg)
   {
     if (!this->_session) {
-      qDebug() << "Tried to send on a disconnected connection! Aborting.";
+      DEBUG_LOG << "Tried to send on a disconnected connection! Aborting.";
       return;
     }
 
-    this->_session->send(msg.toStdString());
+    this->_session->send(msg.toUtf8().data());
   }
 
   void close()
   {
     if (!this->_session) {
-      qDebug() << "Tried to close a disconnected connection!";
+      DEBUG_LOG << "Tried to close a disconnected connection!";
       return;
     }
 
@@ -136,37 +141,37 @@ void WebSocketWrapper::run()
     boost::asio::io_service io_service;
 
     websocketpp::client_ptr client(
-      new websocketpp::client(io_service, boost::shared_ptr<WebSocketWrapperPrivate>(_handler.data())));
+      new websocketpp::client(io_service, boost::shared_ptr<WebSocketWrapperPrivate>(this->_handler.data())));
 
     client->init();
     client->set_header("User Agent","Qt WebSocket++");
 
-    client->connect(_handler->url.toStdString());
+    client->connect(this->_handler->url.toStdString());
 
     io_service.run();
   } catch(std::exception& e) {
     emit this->failed();
-    qWarning() << "Caught exception trying to get connection to endpoint: " << _handler->url << e.what();
+    WARN_LOG << "Caught exception trying to get connection to endpoint: " << this->_handler->url << e.what();
   } catch (const char* msg) {
     emit this->failed();
-    qWarning() << "Const const char& exception:" << msg;
+    WARN_LOG << "Const const char& exception:" << msg;
   }
 }
 
 void WebSocketWrapper::send(const QString& msg)
 {
-  Q_ASSERT(!_handler.isNull());
-  if (_handler.isNull())
+  Q_ASSERT(!this->_handler.isNull());
+  if (this->_handler.isNull())
     return;
 
-  _handler->send(msg);
+  this->_handler->send(msg);
 }
 
 void WebSocketWrapper::stop()
 {
-  Q_ASSERT(!_handler.isNull());
-  if (_handler.isNull())
+  Q_ASSERT(!this->_handler.isNull());
+  if (this->_handler.isNull())
     return;
 
-  _handler->close();
+  this->_handler->close();
 }

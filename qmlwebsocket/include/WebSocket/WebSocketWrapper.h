@@ -27,7 +27,7 @@
 #pragma once
 
 #include <WebSocket/Global.h>
-#include <QThread>
+#include <QtCore/QThread>
 
 class WebSocketWrapperPrivate;
 

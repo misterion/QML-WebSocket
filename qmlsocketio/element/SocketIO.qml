@@ -35,6 +35,7 @@ Item {
 
     property string uri;
     property bool connected: false;
+    property bool debug: false;
 
     property int heartbeatTimeout: 15000;  //@readonly
     property int disconnectTimeout: 25000; //@readonly
@@ -112,6 +113,12 @@ Item {
         send(5, JSON.stringify({ name: name, args: args }), endPoint, id);
     }
 
+    function _debug(message) {
+        if (debug) {
+            console.debug(message)
+        }
+    }
+
     function _handshake() {
         var uri = new Request.Uri(handler.uri),
             protocol = uri.protocol();
@@ -122,13 +129,20 @@ Item {
         Request.http.request(uri, function(response) {
             var expr = /([0-9a-zA-Z_-]*):([0-9]*):([0-9]*):(.*)/,
                 result, sid;
+
             if (response.status !== 200) {
-                console.debug('Socket.IO Handshake: Server rejected connection with code ' +  response.status)
+                console.log('Socket.IO Handshake: Server rejected connection with code ' +  response.status)
                 handler.failed();
                 return;
             }
 
             result = expr.exec(response.body);
+            if (null === result) {
+                console.log('Socket.IO Handshake: Server response not match protocol ' +  response.body)
+                handler.failed();
+                return;
+            }
+
             sid = result[1];
 
             handler.heartbeatTimeout = parseInt(result[2], 10);
@@ -137,7 +151,7 @@ Item {
             uri.setPath('/socket.io/1/websocket/' + sid);
             uri.setProtocol(protocol);
 
-            console.log('Connecting to '  + uri)
+            _debug('Socket.IO Handshake: Connecting to '  + uri)
 
             socket.connect(uri);
         });
@@ -156,32 +170,38 @@ Item {
 
         var expr = /([0-8]):([0-9]*):([^:]*)[:]?(.*)/,
             result = expr.exec(message),
-            type = Number(result[1]),
+            type,
             parsedObject;
 
-        if (type === NaN) {
-            console.debug('Socket.IO wrong packet type ' + result[1]);
+        if (null === result) {
+            console.log('Socket.IO wrong packet data ' +  message);
+            return;
+        }
+
+        type = Number(result[1]);
+        if (NaN === type) {
+            console.log('Socket.IO wrong packet type ' + result[1]);
             return;
         }
 
         switch(type) {
         case 0:
-            console.debug('Received message type 0 (Disconnect)');
+            _debug('Received message type 0 (Disconnect)');
             socket.disconnect();
             break;
         case 1: //Connection Acknowledgement
-            console.debug('Received Message type 1 (Connect)');
+            _debug('Received Message type 1 (Connect)');
             break;
         case 2:
-            console.debug('Received Message type 2 (Heartbeat)');
+            _debug('Received Message type 2 (Heartbeat)');
             _sendHeartbeat();
             break;
         case 3:
-            console.debug('Received Message type 3 (Message): ' + message);
+            _debug('Received Message type 3 (Message): ' + message);
             message(result[4] || '', result[3] || '', result[2] || '');
             break;
         case 4:
-            console.debug('Received Message type 4 (JSON Message): ' + message)
+            _debug('Received Message type 4 (JSON Message): ' + message)
             try {
                 parsedObject = JSON.parse(result[4]);
                 jsonMessage(parsedObject, result[3] || '', result[2] || 0);
@@ -190,7 +210,7 @@ Item {
             }
             break;
         case 5:
-            console.debug('Received Message type 5 (Event): ' + message)
+            _debug('Received Message type 5 (Event): ' + message)
             try {
                 parsedObject = JSON.parse(result[4]);
             } catch(e) {
@@ -210,23 +230,23 @@ Item {
             }
             break;
         case 6:
-            console.debug('Received Message type 6 (ACK)');
+            _debug('Received Message type 6 (ACK)');
             break;
         case 7:
-            console.debug('Received Message type 7 (Error): ' + message);
+            _debug('Received Message type 7 (Error): ' + message);
             _sendErrorPacket(result[3] || '', result[4]);
             break;
         case 8:
-            console.debug('Received Message type 8 (Noop)');
+            _debug('Received Message type 8 (Noop)');
             break;
         default:
-            console.debug('Invalid Socket.IO message type: ' + result[1]);
+            _debug('Invalid Socket.IO message type: ' + result[1]);
             break;
         }
     }
 
     function _sendErrorPacket(endPoint, rawString) {
-        var plusPos = matches[4].search('+');
+        var plusPos = rawString.search('+');
         if (-1 === plusPos)
             return;
 
