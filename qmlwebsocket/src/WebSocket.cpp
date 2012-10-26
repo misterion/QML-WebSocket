@@ -27,6 +27,8 @@
 #include <WebSocket/WebSocket.h>
 #include <WebSocket/WebSocketWrapper.h>
 
+#define SIGNAL_CONNECT_CHECK(X) { bool result = X; Q_ASSERT_X(result, __FUNCTION__ , #X); }
+
 WebSocket::WebSocket(QDeclarativeItem *parent /*= 0*/) : QDeclarativeItem(parent)
 {
 }
@@ -39,10 +41,11 @@ void WebSocket::connect(const QString &uri)
 {
   this->_wrapper.reset(new WebSocketWrapper(uri, this));
 
-  QObject::connect(this->_wrapper.data(), SIGNAL(message(const QString&)), this, SIGNAL(message(const QString&)));
-  QObject::connect(this->_wrapper.data(), SIGNAL(opened()), this, SIGNAL(opened()));
-  QObject::connect(this->_wrapper.data(), SIGNAL(closed()), this, SIGNAL(closed()));
-  QObject::connect(this->_wrapper.data(), SIGNAL(failed()), this, SIGNAL(failed()));
+  SIGNAL_CONNECT_CHECK(
+    QObject::connect(this->_wrapper.data(), SIGNAL(message(const QString&)), this, SIGNAL(message(const QString&))));
+  SIGNAL_CONNECT_CHECK(QObject::connect(this->_wrapper.data(), SIGNAL(opened()), this, SIGNAL(opened())));
+  SIGNAL_CONNECT_CHECK(QObject::connect(this->_wrapper.data(), SIGNAL(closed()), this, SIGNAL(closed())));
+  SIGNAL_CONNECT_CHECK(QObject::connect(this->_wrapper.data(), SIGNAL(failed()), this, SIGNAL(failed())));
 
   this->_wrapper->start();
 }

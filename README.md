@@ -8,4 +8,6 @@ active for a 6 last months. So i turn wrapper to use legace 0.1 version of webso
 
 Also it is designed for embedding and using directly in a Qt Qml application.
 
+WebSocketWrapper based on originals from Leo Franchi <lfranchi@kde.org>
+
 (c) 2012 Nikolay Bondarenko <misterionkell@gmail.com>

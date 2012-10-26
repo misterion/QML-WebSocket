@@ -28,9 +28,11 @@ import QtQuick 1.1
 import "." as Elem
 
 Rectangle {
-    function newsHandler(a,b) {
-        console.log('Handler' , JSON.stringify(a) ,JSON.stringify(b) );
-        socket.emit('my other event', 'hello man!');
+    function newsHandler(helloObj) {
+        console.log('Handler' , JSON.stringify(helloObj));
+        socket.emit('my other event', 'Привет мужик!');
+
+        text.text = helloObj.hello;
     }
 
     width: 360
@@ -41,6 +43,13 @@ Rectangle {
         onClicked: {
             socket.connect();
         }
+    }
+
+    Text {
+        id: text
+        x: 100
+        y : 100
+        text: "No text"
     }
 
     Elem.SocketIO {
