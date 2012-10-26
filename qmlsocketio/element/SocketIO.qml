@@ -129,6 +129,7 @@ Item {
         Request.http.request(uri, function(response) {
             var expr = /([0-9a-zA-Z_-]*):([0-9]*):([0-9]*):(.*)/,
                 result, sid;
+
             if (response.status !== 200) {
                 console.log('Socket.IO Handshake: Server rejected connection with code ' +  response.status)
                 handler.failed();
@@ -169,10 +170,16 @@ Item {
 
         var expr = /([0-8]):([0-9]*):([^:]*)[:]?(.*)/,
             result = expr.exec(message),
-            type = Number(result[1]),
+            type,
             parsedObject;
 
-        if (type === NaN) {
+        if (null === result) {
+            console.log('Socket.IO wrong packet data ' +  message);
+            return;
+        }
+
+        type = Number(result[1]);
+        if (NaN === type) {
             console.log('Socket.IO wrong packet type ' + result[1]);
             return;
         }

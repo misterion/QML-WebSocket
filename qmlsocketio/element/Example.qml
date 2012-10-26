@@ -29,9 +29,7 @@ import "." as Elem
 
 Rectangle {
     function newsHandler(helloObj) {
-        console.log('Handler' , JSON.stringify(helloObj));
-        socket.emit('my other event', 'Привет мужик!');
-
+        socket.emit('my other event', 'И тебе привет!');
         text.text = helloObj.hello;
     }
 
@@ -47,14 +45,17 @@ Rectangle {
 
     Text {
         id: text
-        x: 100
-        y : 100
+
+        x: 10
+        y : 10
         text: "No text"
     }
 
     Elem.SocketIO {
         id: socket
+
         uri: 'ws://localhost:12345'
+
         Component.onCompleted: {
             registerEvent('news', newsHandler);
         }
