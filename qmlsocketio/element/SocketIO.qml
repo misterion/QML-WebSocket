@@ -250,9 +250,9 @@ Item {
         if (-1 === plusPos)
             return;
 
-        errorMessage(matches[4].substring(0, plusPos),
-                     matches[4].substring(plusPos + 1, matches[4].length),
-                     matches[3] || '');
+        errorMessage(rawString.substring(0, plusPos),
+                     rawString.substring(plusPos + 1, rawString.length),
+                     endPoint || '');
     }
 
     WebSocket {
