@@ -1,0 +1,6 @@
+plugin qmlwebsocket 
+plugin qmlwebsocket plugin
+plugin qmlwebsocket ../plugin
+plugin qmlwebsocket ../../plugin
+plugin qmlwebsocket ../../../plugin
+plugin qmlwebsocket ../../../../plugin
