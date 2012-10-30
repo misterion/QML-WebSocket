@@ -27,9 +27,11 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Deploy.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Deploy.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -91,6 +93,17 @@ xcopy /Y /I /R "$(TargetDir)*.pdb" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(Commo
 xcopy /Y /I /R /E "$(ProjectDir)include\*.h" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(CommonArea)\include\"
 xcopy /Y /I /R /E "$(ProjectDir)include\*" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(CommonArea)\include\"
 xcopy /Y /I /R /E "$(ProjectDir)i18n\*" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(CommonArea)\i18n"
+
+cd "$(SolutionDir)qmlsocketio"
+call "touch.cmd"
+
+xcopy /Y /I /R /E "$(SolutionDir)qmlsocketio\*.qml" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(CommonArea)\qml"
+xcopy /Y /I /R /E "$(SolutionDir)qmlsocketio\*.dll" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(CommonArea)\qml"
+xcopy /Y /I /R /E "$(SolutionDir)qmlsocketio\*.js" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(CommonArea)\qml"
+xcopy /Y /I /R /E "$(SolutionDir)qmlsocketio\qmldir*" "$(QGNACOMMONDIR)\GGS\$(SolutionName)\$(CommonArea)\qml"
+
+
+
 )</Command>
     </PostBuildEvent>
     <PreBuildEvent>

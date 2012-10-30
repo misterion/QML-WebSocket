@@ -19,9 +19,9 @@
 
     #define PRODUCTNAME      "Qml WebSocket extension"
 #else
-    #define FILEVER          $$MAJOR$$,$$MINOR$$,$$HUDSON_BUILD$$,$$SVN_REVISION$$
+    #define FILEVER          $$MAJOR$$,$$MINOR$$,$$HUDSON_BUILD$$
     #define PRODUCTVER       FILEVER
-    #define STRFILEVER       "$$MAJOR$$,$$MINOR$$,$$HUDSON_BUILD$$,$$SVN_REVISION$$"
+    #define STRFILEVER       "$$MAJOR$$,$$MINOR$$,$$HUDSON_BUILD$$,$$GIT_REVISION$$"
     #define STRPRODUCTVER    STRFILEVER
 
     #define COMPANYNAME      "$$COMPANYNAME$$"

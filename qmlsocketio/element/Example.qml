@@ -29,7 +29,7 @@ import "." as Elem
 
 Rectangle {
     function newsHandler(helloObj) {
-        socket.emit('my other event', 'И тебе привет!');
+        socket.emit('my other event', {yes: 'И тебе привет!'});
         text.text = helloObj.hello;
     }
 
