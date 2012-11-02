@@ -39,7 +39,11 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            socket.connect();
+            if (socket.connected) {
+                socket.emit('it`s another event', {data: 'More one!'});
+            } else {
+                socket.connect();
+            }
         }
     }
 
@@ -48,16 +52,19 @@ Rectangle {
 
         x: 10
         y : 10
+
         text: "No text"
     }
 
     Elem.SocketIO {
         id: socket
+        debug: true
 
         uri: 'ws://localhost:12345'
 
         Component.onCompleted: {
-            registerEvent('news', newsHandler);
+            console.log(on('news', newsHandler)); //this one conencted
+            console.log(on('news', newsHandler)); //this one ignored
         }
     }
 }

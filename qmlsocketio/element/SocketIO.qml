@@ -60,15 +60,29 @@ Item {
      * Most of real socket.io application use events(type 5) for communicate between server and client. So it`s a
      * high level api for that.
      *
-     * registerEvent('chatMessage', function(fromId, toId, text) { ... });
+     * on('chatMessage', function(fromId, toId, text) { ... });
      *
      */
-    function registerEvent(name, func) {
-        if (Container.handlers.hasOwnProperty[name]) {
-            Container.handlers[name].push(func);
+    function on(name, func) {
+        return _registerEvent(Container.onHandlers, name, func);
+    }
+
+    function _registerEvent(container, name, func) {
+        if (container.hasOwnProperty(name)) {
+            if (container[name].filter(function(e) { return e === func; }).length) {
+                return false;
+            }
+
+            container[name].push(func);
         } else {
-            Container.handlers[name] = [func];
+            container[name] = [func];
         }
+
+        return true;
+    }
+
+    function once(name, func) {
+       return _registerEvent(Container.onceHandlers, name, func);
     }
 
     function connect() {
@@ -224,10 +238,8 @@ Item {
             }
 
             eventMessage(parsedObject.name, parsedObject.args || {}, result[3] || '', result[2] || '');
+            _handleEvents(parsedObject.name, parsedObject.args);
 
-            if (Container.handlers.hasOwnProperty(parsedObject.name)) {
-                Container.handlers[parsedObject.name].forEach(function(e) { e.apply(this, parsedObject.args); });
-            }
             break;
         case 6:
             _debug('Received Message type 6 (ACK)');
@@ -243,6 +255,38 @@ Item {
             _debug('Invalid Socket.IO message type: ' + result[1]);
             break;
         }
+    }
+
+    function _handleEvents(name, args) {
+        if (Container.onceHandlers.hasOwnProperty(name)) {
+            Container.onceHandlers[name].forEach(function(e) {
+                _executeHandler(e, args);
+            });
+            delete Container.onceHandlers[name];
+        }
+
+        if (!Container.onHandlers.hasOwnProperty(name)) {
+            return;
+        }
+
+        Container.onHandlers[name] = Container.onHandlers[name].filter(function(e) {
+            return _executeHandler(e, args);
+        });
+    }
+
+    function _executeHandler(handler, args) {
+        if (!handler) {
+            return false;
+        }
+
+        try {
+            handler.apply(this, args);
+        } catch (e) {
+             _debug('Handler execution error: ' + e.message);
+            return false;
+        }
+
+        return true;
     }
 
     function _sendErrorPacket(endPoint, rawString) {

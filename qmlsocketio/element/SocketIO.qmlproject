@@ -1,7 +1,7 @@
 import QmlProject 1.1
 
 Project {
-    mainFile: "SocketIO.qml"
+    mainFile: "Example.qml"
 
     QmlFiles {
         directory: "."
