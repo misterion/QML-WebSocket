@@ -120,11 +120,15 @@ Item {
     }
 
     function sendJson(data, endPoint, id) {
-        send(4, JSON.stringify(data), endPoint, id);
+        var message = JSON.stringify(data);
+         _debug('Sended Message type 4 (JSON Message): ' + message)
+        send(4, message, endPoint, id);
     }
 
     function emit(name, args, endPoint, id) {
-        send(5, JSON.stringify({ name: name, args: args }), endPoint, id);
+        var message = JSON.stringify({ name: name, args: args });
+        _debug('Sended Message type 5 (Event): ' + message)
+        send(5, message, endPoint, id);
     }
 
     function _debug(message) {

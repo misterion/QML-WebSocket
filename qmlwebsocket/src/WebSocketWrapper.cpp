@@ -69,16 +69,16 @@ public:
   {
     DEBUG_LOG << "Connection Opened: " << this->url;
 
-    this->_wrapper->opened();
     this->_session = con;
+    this->_wrapper->opened();
   }
 
   void on_close(session_ptr con)
   {
     DEBUG_LOG << "Connection Closed: " << this->url;
 
-    this->_wrapper->closed();
     this->_session = websocketpp::client_session_ptr();
+    this->_wrapper->closed();
   }
   
   void on_message(session_ptr con, const std::string &msg)
