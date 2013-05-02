@@ -1,0 +1,12 @@
+{
+  "name": "QML-WebSocket Echo Server",
+  "version": "1.0.0",
+  "description": "Sample application",
+  "main": "index.js",
+  "repository": "",
+  "author": "Nikolay Bondarenko<misterionkell@gmail.com>",
+  "license": "LGPL",
+  "dependencies" : {
+      "socket.io" : "*"
+  }
+}

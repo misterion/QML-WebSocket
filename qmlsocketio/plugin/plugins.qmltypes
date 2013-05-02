@@ -4,29 +4,5 @@ import QtQuick.tooling 1.1
 // It is used for QML tooling purposes only.
 
 Module {
-    Component {
-        name: "WebSocket"
-        defaultProperty: "data"
-        prototype: "QDeclarativeItem"
-        exports: [
-            "WebSocket/WebSocket 1.0"
-        ]
-        Signal {
-            name: "message"
-            Parameter { name: "message"; type: "string" }
-        }
-        Signal { name: "opened" }
-        Signal { name: "closed" }
-        Signal { name: "failed" }
-        Method {
-            name: "connect"
-            Parameter { name: "uri"; type: "string" }
-        }
-        Method { name: "disconnect" }
-        Method {
-            name: "send"
-            Parameter { name: "message"; type: "string" }
-        }
-    }
     Component { name: "QEasingCurve"; prototype: "QDeclarativeEasingValueType" }
 }
