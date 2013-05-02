@@ -1,5 +1,5 @@
 {
-  "name": "QML-WebSocket Echo Server",
+  "name": "SampleEchoServer",
   "version": "1.0.0",
   "description": "Sample application",
   "main": "index.js",

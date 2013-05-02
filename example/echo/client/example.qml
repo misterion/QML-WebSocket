@@ -69,8 +69,9 @@ Rectangle {
         anchors.centerIn: parent
 
         Column {
+            anchors.centerIn: parent
+
             Text {
-                anchors.centerIn: parent
                 text: "Press to send request"
 
                 MouseArea {
@@ -85,10 +86,6 @@ Rectangle {
 
             Text {
                 id: text
-
-                x: 10
-                y : 10
-
                 text: "No text"
             }
         }
@@ -102,7 +99,7 @@ Rectangle {
         id: socket
         debug: true
 
-        uri: 'ws://localhost:8080'
+        uri: 'ws://localhost:8081'
 
         Component.onCompleted: {
             console.log(on('response', responseHandler)); //this one connected
