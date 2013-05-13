@@ -62,4 +62,7 @@ private:
 
     QScopedPointer<WebSocketWrapperPrivate> _handler;
     friend class WebSocketWrapperPrivate;
+
+
+    QString _url;
 };

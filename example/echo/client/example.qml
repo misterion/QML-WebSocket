@@ -27,8 +27,6 @@
 import QtQuick 1.1
 import "./../../../qmlsocketio"
 
-
-
 Rectangle {
     width: 400
     height: 300
