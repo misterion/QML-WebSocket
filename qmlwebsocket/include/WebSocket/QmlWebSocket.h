@@ -27,12 +27,27 @@
 #pragma once
 
 #include <WebSocket/Global.h>
-#include <QtDeclarative/QDeclarativeExtensionPlugin>
 
-class QMLWEBSOCKET_EXPORT QmlWebSocket: public QDeclarativeExtensionPlugin
+#ifdef HAVE_QT5
+#include <QQmlExtensionPlugin>
+#include <QQmlEngine>
+#else
+#include <QtDeclarative/QDeclarativeExtensionPlugin>
+#endif
+
+class QMLWEBSOCKET_EXPORT QmlWebSocket
+#ifdef HAVE_QT5
+    : public QQmlExtensionPlugin
+#else
+    : public QDeclarativeExtensionPlugin
+#endif
 {
   Q_OBJECT
 public:
   void registerTypes(const char *uri);
+#ifdef HAVE_QT5
+  void initializeEngine(QQmlEngine *engine, const char *uri);
+#else
   void initializeEngine(QDeclarativeEngine *engine, const char *uri);
+#endif
 };

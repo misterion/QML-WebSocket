@@ -25,12 +25,24 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include <WebSocket/WebSocket.h>
-#include <WebSocket/WebSocketWrapper.h>
 
-#define SIGNAL_CONNECT_CHECK(X) { bool result = X; Q_ASSERT_X(result, __FUNCTION__ , #X); }
-
-WebSocket::WebSocket(QDeclarativeItem *parent /*= 0*/) : QDeclarativeItem(parent)
+#ifdef HAVE_QT5
+WebSocket::WebSocket(QQuickItem *parent /*= 0*/)
+    : QQuickItem(parent)
+#else
+WebSocket::WebSocket(QDeclarativeItem *parent /*= 0*/)
+    : QDeclarativeItem(parent)
+#endif
 {
+    this->_wsSocket = new QWsSocket(this);
+    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(socketStateChanged(QAbstractSocket::SocketState))));
+    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(frameReceived(QString)), this, SIGNAL(message(const QString&))));
+
+
+    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(connected()), this, SIGNAL(connected())));
+    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(connected()), this, SIGNAL(opened())));
+    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(disconnected()), this, SIGNAL(disconnected())));
+    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(disconnected()), this, SIGNAL(closed())));
 }
 
 WebSocket::~WebSocket()
@@ -39,32 +51,58 @@ WebSocket::~WebSocket()
 
 void WebSocket::connect(const QString &uri)
 {
-  this->_wrapper.reset(new WebSocketWrapper(uri, this));
-
-  SIGNAL_CONNECT_CHECK(
-    QObject::connect(this->_wrapper.data(), SIGNAL(message(const QString&)), this, SIGNAL(message(const QString&))));
-  SIGNAL_CONNECT_CHECK(QObject::connect(this->_wrapper.data(), SIGNAL(opened()), this, SIGNAL(opened())));
-  SIGNAL_CONNECT_CHECK(QObject::connect(this->_wrapper.data(), SIGNAL(closed()), this, SIGNAL(closed())));
-  SIGNAL_CONNECT_CHECK(QObject::connect(this->_wrapper.data(), SIGNAL(failed()), this, SIGNAL(failed())));
-
-  this->_wrapper->start();
+  this->_wsSocket->connectToHost(QUrl(uri));
 }
+
 
 void WebSocket::disconnect()
 {
-  if (this->_wrapper.isNull()) {
-    return;
-  }
-
-  this->_wrapper->stop();
-  this->_wrapper.reset();
+  this->_wsSocket->disconnectFromHost();
 }
 
 void WebSocket::send(const QString& message)
 {
-  if (this->_wrapper.isNull()) {
-    return;
-  }
+  this->_wsSocket->write(message);
+}
 
-  this->_wrapper->send(message);
+WebSocket::SocketState WebSocket::socketState()
+{
+  return this->_state;
+}
+
+void WebSocket::stateChanged(QAbstractSocket::SocketState socketState)
+{
+    switch (socketState)
+    {
+        case QAbstractSocket::UnconnectedState:
+            this->_state = Unconnected;
+            break;
+        case QAbstractSocket::HostLookupState:
+            this->_state = HostLookup;
+            break;
+        case QAbstractSocket::ConnectingState:
+            this->_state = Connecting;
+            break;
+        case QAbstractSocket::ConnectedState:
+            this->_state = Connected;
+            emit this->connected();
+            emit this->opened();
+            break;
+        case QAbstractSocket::BoundState:
+            this->_state = Bound;
+            break;
+        case QAbstractSocket::ClosingState:
+            emit this->disconnected();
+            emit this->closed();
+            this->_state = Closing;
+            break;
+        case QAbstractSocket::ListeningState:
+            this->_state = Listening;
+            break;
+        default:
+            this->_state = Unknown;
+            break;
+    }
+
+    emit this->socketStateChanged();
 }

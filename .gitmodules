@@ -1,4 +1,3 @@
-[submodule "vendor/websocketpp"]
-	path = vendor/websocketpp
-	url = https://github.com/lfranchi/websocketpp.git
-
+[submodule "vendor/QtWebSocket"]
+	path = vendor/QtWebSocket
+	url = https://github.com/misterion/QtWebsocket.git

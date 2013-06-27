@@ -32,15 +32,24 @@
 
 void QmlWebSocket::registerTypes(const char *uri)
 {
+  Q_ASSERT(QLatin1String(uri) == QLatin1String("WebSocket"));
+
+  //UNDONE pass uri in register
   qmlRegisterType<WebSocket>("WebSocket", 1, 0, "WebSocket");
 }
 
+#ifdef HAVE_QT5
+void QmlWebSocket::initializeEngine(QQmlEngine *engine, const char *uri)
+#else
 void QmlWebSocket::initializeEngine(QDeclarativeEngine *engine, const char *uri)
+#endif
 {
 }
-
-#ifdef _DEBUG
-  Q_EXPORT_PLUGIN2(QMLWebSocketd, QmlWebSocket);
-#else
-  Q_EXPORT_PLUGIN2(QMLWebSocket, QmlWebSocket);
+\
+#ifndef HAVE_QT5
+  #ifdef _DEBUG
+    Q_EXPORT_PLUGIN2(QMLWebSocketd, QmlWebSocket);
+  #else
+    Q_EXPORT_PLUGIN2(QMLWebSocket, QmlWebSocket);
+  #endif
 #endif

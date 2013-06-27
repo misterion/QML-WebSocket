@@ -27,7 +27,15 @@
 #pragma once 
 
 #include <WebSocket/Global.h>
-#include <QtDeclarative/QDeclarativeItem>
+#include <QWSSocket.h>
+
+
+#ifdef HAVE_QT5
+  #include <QtQml/QQmlEngine>
+  #include <QtQuick/QQuickView>
+#else
+  #include <QtDeclarative/QDeclarativeItem>
+#endif
 
 class WebSocketWrapper;
 
@@ -36,25 +44,60 @@ class WebSocketWrapper;
 
   \brief A QML Qt wrapper for websocket++'s boost::asio-based websockets.
 */
-class QMLWEBSOCKET_EXPORT WebSocket: public QDeclarativeItem
+class QMLWEBSOCKET_EXPORT WebSocket
+#ifdef HAVE_QT5
+    : public QQuickItem
+#else
+    : public QDeclarativeItem
+#endif
 {
   Q_OBJECT
+  Q_ENUMS(SocketState)
+  Q_PROPERTY(SocketState socketState READ socketState NOTIFY socketStateChanged)
+#ifdef HAVE_QT5
+  Q_PLUGIN_METADATA(IID "WebSocket")
+#endif
 public:
-  explicit WebSocket(QDeclarativeItem *parent = 0); 
+  enum SocketState {
+    Unknown = 0,
+    Unconnected,
+    HostLookup,
+    Connecting,
+    Connected,
+    Bound,
+    Closing,
+    Listening
+  };
+
+#ifdef HAVE_QT5
+  explicit WebSocket(QQuickItem *parent = 0);
+#else
+  explicit WebSocket(QDeclarativeItem *parent = 0);
+#endif
   virtual ~WebSocket();
   
   Q_INVOKABLE void connect(const QString &uri);
   Q_INVOKABLE void disconnect();
-
   Q_INVOKABLE void send(const QString& message);
 
 signals:
   void message(const QString& message);
-  void opened();
-  void closed();
+  void connected();
+  void opened(); //depricated
+  void disconnected();
+  void closed();//depricated
   void failed();
+
+  void socketStateChanged();
+
+protected slots:
+  void stateChanged(QAbstractSocket::SocketState socketState);
+
+private:
+  SocketState socketState();
 
 private:
   Q_DISABLE_COPY(WebSocket)
-  QScopedPointer<WebSocketWrapper> _wrapper;
+  QWsSocket *_wsSocket;
+  SocketState _state;
 };
