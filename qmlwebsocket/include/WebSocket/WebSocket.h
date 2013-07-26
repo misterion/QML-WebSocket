@@ -29,15 +29,12 @@
 #include <WebSocket/Global.h>
 #include <QWSSocket.h>
 
-
 #ifdef HAVE_QT5
   #include <QtQml/QQmlEngine>
   #include <QtQuick/QQuickView>
 #else
   #include <QtDeclarative/QDeclarativeItem>
 #endif
-
-class WebSocketWrapper;
 
 /*!
   \class WebSocket
@@ -81,18 +78,16 @@ public:
   Q_INVOKABLE void send(const QString& message);
 
 signals:
-  void message(const QString& message);
+  void message(QString message);
   void connected();
-  void opened(); //depricated
   void disconnected();
-  void closed();//depricated
   void failed();
 
   void socketStateChanged();
 
-protected slots:
+public slots:
   void stateChanged(QAbstractSocket::SocketState socketState);
-
+    
 private:
   SocketState socketState();
 

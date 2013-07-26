@@ -35,14 +35,8 @@ WebSocket::WebSocket(QDeclarativeItem *parent /*= 0*/)
 #endif
 {
     this->_wsSocket = new QWsSocket(this);
-    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(socketStateChanged(QAbstractSocket::SocketState))));
-    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(frameReceived(QString)), this, SIGNAL(message(const QString&))));
-
-
-    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(connected()), this, SIGNAL(connected())));
-    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(connected()), this, SIGNAL(opened())));
-    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(disconnected()), this, SIGNAL(disconnected())));
-    Q_ASSERT(QObject::connect(this->_wsSocket, SIGNAL(disconnected()), this, SIGNAL(closed())));
+    QObject::connect(this->_wsSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
+    QObject::connect(this->_wsSocket, SIGNAL(frameReceived(QString)), this, SIGNAL(message(QString)));
 }
 
 WebSocket::~WebSocket()
@@ -53,7 +47,6 @@ void WebSocket::connect(const QString &uri)
 {
   this->_wsSocket->connectToHost(QUrl(uri));
 }
-
 
 void WebSocket::disconnect()
 {
@@ -86,14 +79,12 @@ void WebSocket::stateChanged(QAbstractSocket::SocketState socketState)
         case QAbstractSocket::ConnectedState:
             this->_state = Connected;
             emit this->connected();
-            emit this->opened();
             break;
         case QAbstractSocket::BoundState:
             this->_state = Bound;
             break;
         case QAbstractSocket::ClosingState:
             emit this->disconnected();
-            emit this->closed();
             this->_state = Closing;
             break;
         case QAbstractSocket::ListeningState:

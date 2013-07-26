@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qmlwebsocket", "qmlwebsocket\qmlwebsocket.vcxproj", "{DD6F545A-2D3C-4AA4-A860-697D09D5FBA9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2} = {7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80CB66A1-5E7F-47C1-BBD4-8B92A4B98F2B}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,16 +13,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QtWebsocket", "vendor\QtWebSocket\QtWebsocket\QtWebsocket.vcxproj", "{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
+		Template|Win32 = Template|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DD6F545A-2D3C-4AA4-A860-697D09D5FBA9}.Debug|Win32.ActiveCfg = Debug|Win32
 		{DD6F545A-2D3C-4AA4-A860-697D09D5FBA9}.Debug|Win32.Build.0 = Debug|Win32
 		{DD6F545A-2D3C-4AA4-A860-697D09D5FBA9}.Release|Win32.ActiveCfg = Release|Win32
 		{DD6F545A-2D3C-4AA4-A860-697D09D5FBA9}.Release|Win32.Build.0 = Release|Win32
+		{DD6F545A-2D3C-4AA4-A860-697D09D5FBA9}.Template|Win32.ActiveCfg = Release|Win32
+		{DD6F545A-2D3C-4AA4-A860-697D09D5FBA9}.Template|Win32.Build.0 = Release|Win32
+		{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}.Debug|Win32.Build.0 = Debug|Win32
+		{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}.Release|Win32.ActiveCfg = Release|Win32
+		{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}.Release|Win32.Build.0 = Release|Win32
+		{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}.Template|Win32.ActiveCfg = Template|Win32
+		{7E3A920C-4257-41A1-B9B9-BFA138C1C8A2}.Template|Win32.Build.0 = Template|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

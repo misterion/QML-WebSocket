@@ -324,11 +324,11 @@ Item {
 
         onMessage: handler._parseMessage(message);
         onFailed: handler.failed();
-        onOpened: {
+        onConnected: {
             handler.connected = true;
             handler.opened();
         }
-        onClosed: {
+        onDisconnected: {
             handler.connected = false;
             handler.closed();
         }

@@ -45,7 +45,7 @@ void QmlWebSocket::initializeEngine(QDeclarativeEngine *engine, const char *uri)
 #endif
 {
 }
-\
+
 #ifndef HAVE_QT5
   #ifdef _DEBUG
     Q_EXPORT_PLUGIN2(QMLWebSocketd, QmlWebSocket);
