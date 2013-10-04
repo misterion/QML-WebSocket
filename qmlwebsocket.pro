@@ -38,11 +38,6 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/qmlwebsocket/include/ \
 
 include(qmlwebsocket.pri)
 
-#INCLUDEPATH += \
-#    $$_boostRoot \
-#    $$_PRO_FILE_PWD_/qmlwebsocket/include \
-#    "./vendor/websocketpp/src"
-#
 win32 {
     isEmpty(QT_DEBUG) {
         _websocketppLib = websocketpp
@@ -51,13 +46,7 @@ win32 {
     }
 }
 
-#LIBS += \
-#    -L$$_boostRoot/stage/lib \
-#    -l$$_PRO_FILE_PWD_/vendor/websocketpp/lib/$$_websocketppLib
-
 # Input
-
-
 
 #!equals(_PRO_FILE_PWD_, $$OUT_PWD) {
     #copy_qmldir.target = $$OUT_PWD/qmldir
@@ -69,14 +58,3 @@ win32 {
 #}
 
 #qmldir.files = qmldir
-#unix {
-#    maemo5 | !isEmpty(MEEGO_VERSION_MAJOR) {
-#        installPath = /usr/lib/qt4/imports/$$replace(uri, \\., /)
-#    } else {
-#        installPath = $$[QT_INSTALL_IMPORTS]/$$replace(uri, \\., /)
-#    }
-    #qmldir.path = $$installPath
-#    target.path = $$installPath
-    #INSTALLS += target qmldir
-#}
-
